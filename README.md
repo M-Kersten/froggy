@@ -45,6 +45,22 @@ npm run build      # typecheck + production build into dist/
 npm run preview    # serve the production build locally
 ```
 
+## 🚀 Deploying (GitHub Pages)
+
+The Vite build uses a **relative base** (`base: './'`), so the same `dist/`
+works at a domain root, a project subpath (`user.github.io/froggy/`) or a custom
+domain — no config change needed.
+
+A workflow at `.github/workflows/deploy.yml` builds and publishes `dist/` to
+Pages automatically. To enable it:
+
+1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Push to the published branch (or run the workflow manually from the
+   **Actions** tab via "Run workflow" — handy for deploying any branch).
+
+For a manual deploy instead, run `npm run build` and publish the `dist/` folder
+to a `gh-pages` branch.
+
 ## 🧩 Editing the garden
 
 The whole layout is data-driven in [`src/data/world.json`](src/data/world.json):
