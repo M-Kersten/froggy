@@ -1,6 +1,7 @@
 import { Text } from '@react-three/drei';
 import { COLORS } from '../../config';
 import { FONT_REGULAR, FONT_SEMIBOLD } from '../../utils/fonts';
+import { roundedPlate } from '../../utils/roundedPlate';
 
 interface SignboardProps {
   title: string;
@@ -37,44 +38,33 @@ export function Signboard({
   return (
     <group position={position} rotation={rotation} scale={scale}>
       {([-1, 1] as const).map((side) => (
-        <mesh key={side} position={[side * (width / 2 - 0.22), 0.3, 0.26]}>
-          <boxGeometry args={[0.12, 0.62, 0.12]} />
-          <meshStandardMaterial color={COLORS.woodDark} flatShading roughness={0.85} />
+        <mesh key={side} position={[side * (width / 2 - 0.24), 0.3, 0.24]}>
+          <cylinderGeometry args={[0.07, 0.08, 0.62, 10]} />
+          <meshStandardMaterial color={COLORS.woodDark} roughness={0.85} />
         </mesh>
       ))}
 
       <group position={[0, 0.64, 0]} rotation={[TILT, 0, 0]}>
-        {/* frame + panel */}
-        <mesh position={[0, -0.03, 0]}>
-          <boxGeometry args={[width + 0.14, 0.06, h + 0.14]} />
-          <meshStandardMaterial color={COLORS.wood} flatShading roughness={0.8} />
+        {/* rounded frame + panel */}
+        <mesh geometry={roundedPlate(width + 0.16, h + 0.16, 0.16, 0.08)} position={[0, -0.03, 0]}>
+          <meshStandardMaterial color={COLORS.wood} roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.01, 0]}>
-          <boxGeometry args={[width, 0.06, h]} />
+        <mesh geometry={roundedPlate(width, h, 0.14, 0.07)} position={[0, 0.02, 0]}>
           <meshStandardMaterial color={COLORS.panel} roughness={0.85} />
         </mesh>
         {/* accent strip along the top edge */}
-        <mesh position={[0, 0.05, -h / 2 + 0.12]}>
-          <boxGeometry args={[width, 0.04, 0.16]} />
+        <mesh geometry={roundedPlate(width - 0.1, 0.18, 0.08, 0.04)} position={[0, 0.085, -h / 2 + 0.18]}>
           <meshStandardMaterial color={accent} roughness={0.6} />
         </mesh>
 
         {/* optional number stamp */}
         {badge !== undefined && (
-          <group position={[-width / 2 + 0.36, 0.06, -h / 2 + 0.12]}>
+          <group position={[-width / 2 + 0.36, 0.1, -h / 2 + 0.18]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.18, 0.18, 0.06, 22]} />
+              <cylinderGeometry args={[0.17, 0.17, 0.05, 22]} />
               <meshStandardMaterial color="#ffffff" roughness={0.5} />
             </mesh>
-            <Text
-              font={FONT_SEMIBOLD}
-              fontSize={0.2}
-              position={[0, 0.06, 0]}
-              rotation={[-Math.PI / 2, 0, 0]}
-              color={accent}
-              anchorX="center"
-              anchorY="middle"
-            >
+            <Text font={FONT_SEMIBOLD} fontSize={0.2} position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]} color={accent} anchorX="center" anchorY="middle">
               {String(badge)}
             </Text>
           </group>
@@ -83,12 +73,12 @@ export function Signboard({
         <Text
           font={FONT_SEMIBOLD}
           fontSize={subtitle ? 0.22 : 0.26}
-          position={[0, 0.06, subtitle ? -0.12 : 0]}
+          position={[0, 0.12, subtitle ? -0.1 : 0.05]}
           rotation={[-Math.PI / 2, 0, 0]}
           color={HEADING}
           anchorX="center"
           anchorY="middle"
-          maxWidth={width - 0.3}
+          maxWidth={width - 0.35}
           textAlign="center"
         >
           {title}
@@ -96,13 +86,13 @@ export function Signboard({
         {subtitle && (
           <Text
             font={FONT_REGULAR}
-            fontSize={0.12}
-            position={[0, 0.06, 0.18]}
+            fontSize={0.13}
+            position={[0, 0.12, 0.22]}
             rotation={[-Math.PI / 2, 0, 0]}
             color={BODY}
             anchorX="center"
             anchorY="middle"
-            maxWidth={width - 0.4}
+            maxWidth={width - 0.45}
             textAlign="center"
             lineHeight={1.3}
           >

@@ -8,13 +8,13 @@ const vertexShader = /* glsl */ `
   varying vec3 vNormal;
   varying float vHeight;
 
-  // Sum of a few cheap sine waves → calm, stylized swell.
+  // Sum of small, higher-frequency ripples → fine, subtle wavelets.
   float waveHeight(vec2 p, float t) {
     float h = 0.0;
-    h += sin(p.x * 0.55 + t * 0.90) * 0.14;
-    h += sin(p.y * 0.65 - t * 0.75) * 0.11;
-    h += sin((p.x + p.y) * 0.50 + t * 1.25) * 0.07;
-    h += sin((p.x - p.y) * 0.80 - t * 1.60) * 0.04;
+    h += sin(p.x * 1.35 + t * 0.85) * 0.05;
+    h += sin(p.y * 1.55 - t * 0.75) * 0.045;
+    h += sin((p.x + p.y) * 1.15 + t * 1.15) * 0.03;
+    h += sin((p.x - p.y) * 1.9 - t * 1.5) * 0.022;
     return h;
   }
 
@@ -28,7 +28,7 @@ const vertexShader = /* glsl */ `
     vHeight = h;
 
     // Normal from finite differences of the height field.
-    float e = 0.35;
+    float e = 0.18;
     float hx = waveHeight(p + vec2(e, 0.0), t) - waveHeight(p - vec2(e, 0.0), t);
     float hy = waveHeight(p + vec2(0.0, e), t) - waveHeight(p - vec2(0.0, e), t);
     vec3 n = normalize(vec3(-hx, -hy, 2.0 * e));
@@ -65,7 +65,7 @@ const fragmentShader = /* glsl */ `
     base *= 1.0 - smoothstep(20.0, 40.0, distC) * 0.35;
 
     // Wave crests catch the light (subtle, calm water).
-    base = mix(base, uColorHighlight, smoothstep(0.07, 0.16, vHeight) * 0.35);
+    base = mix(base, uColorHighlight, smoothstep(0.03, 0.08, vHeight) * 0.3);
 
     // Soft diffuse + a restrained top-down specular sparkle on the crests.
     vec3 L = normalize(uLightDir);

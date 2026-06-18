@@ -13,7 +13,8 @@
   --shadow-sm: 0 4px 14px rgba(31, 59, 46, 0.12);
   --shadow-lg: 0 24px 60px rgba(20, 60, 70, 0.28);
 
-  --font: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-head: 'Baloo 2', 'Varela Round', system-ui, -apple-system, sans-serif;
+  --font-body: 'Varela Round', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -28,7 +29,7 @@ body,
 }
 
 body {
-  font-family: var(--font);
+  font-family: var(--font-body);
   color: var(--ink);
   background: linear-gradient(160deg, var(--sky-1), var(--sky-2));
   overflow: hidden;
@@ -57,7 +58,7 @@ body {
   gap: 0.5rem;
   border: none;
   border-radius: 999px;
-  font-family: var(--font);
+  font-family: var(--font-head);
   font-weight: 600;
   font-size: 1rem;
   padding: 0.8rem 1.5rem;
@@ -141,9 +142,10 @@ body {
 }
 .start__card h1 {
   margin: 0.2rem 0 0.5rem;
-  font-size: clamp(1.6rem, 5vw, 2.1rem);
+  font-family: var(--font-head);
+  font-size: clamp(1.7rem, 5vw, 2.2rem);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
 }
 .start__card p {
   margin: 0 auto 1.6rem;
@@ -176,6 +178,7 @@ body {
   border-radius: 999px;
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(8px);
+  font-family: var(--font-head);
   font-weight: 600;
   font-size: 0.95rem;
   pointer-events: none;
@@ -211,7 +214,7 @@ kbd {
   min-width: 1.5em;
   padding: 0.15em 0.35em;
   margin: 0 0.08em;
-  font-family: var(--font);
+  font-family: var(--font-body);
   font-size: 0.8em;
   font-weight: 600;
   color: var(--ink);
@@ -329,9 +332,10 @@ kbd {
 }
 .modal-body h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.5rem;
+  font-family: var(--font-head);
+  font-size: 1.55rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.005em;
 }
 .modal-body p {
   margin: 0 0 1.4rem;

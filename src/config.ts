@@ -6,9 +6,9 @@
 
 export const COLORS = {
   // Water (deep + cool so the bright land masses pop)
-  waterDeep: '#103a48',
-  waterShallow: '#2b8193',
-  waterHighlight: '#74cbd2',
+  waterDeep: '#11414f',
+  waterShallow: '#2f9aae',
+  waterHighlight: '#93e4ea',
 
   // Sky / ambient
   skyTop: '#cdeef0',
@@ -16,11 +16,11 @@ export const COLORS = {
   fog: '#c4e6e9',
 
   // Islands
-  grass: '#8cca58',
-  grassDark: '#5f9e3f',
+  grass: '#95d75c',
+  grassDark: '#5aa83d',
   grassShade: '#3f7d35',
-  soil: '#9c7647',
-  soilDark: '#6f5230',
+  soil: '#a87f4c',
+  soilDark: '#73552f',
   rockBase: '#7d756a',
   sand: '#e7d6a6',
   sandDark: '#cdb37e',

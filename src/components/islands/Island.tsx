@@ -39,10 +39,10 @@ export function Island({ id, position, radius, accent: _accent, children }: Isla
 
   const mats = useMemo(
     () => ({
-      sand: new THREE.MeshStandardMaterial({ color: COLORS.sand, flatShading: true, roughness: 0.95 }),
-      soil: new THREE.MeshStandardMaterial({ color: COLORS.soil, flatShading: true, roughness: 0.95 }),
-      grass: new THREE.MeshStandardMaterial({ color: COLORS.grass, roughness: 0.85 }),
-      grassDark: new THREE.MeshStandardMaterial({ color: COLORS.grassDark, flatShading: true, roughness: 0.85 }),
+      sand: new THREE.MeshStandardMaterial({ color: COLORS.sand, roughness: 0.95 }),
+      soil: new THREE.MeshStandardMaterial({ color: COLORS.soil, roughness: 1.0 }),
+      grass: new THREE.MeshStandardMaterial({ color: COLORS.grass, roughness: 0.8 }),
+      grassDark: new THREE.MeshStandardMaterial({ color: COLORS.grassDark, roughness: 0.85 }),
       rock: new THREE.MeshStandardMaterial({ color: COLORS.rock, flatShading: true, roughness: 0.95 }),
     }),
     [],
