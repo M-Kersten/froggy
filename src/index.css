@@ -347,6 +347,62 @@ kbd {
   flex: 1 1 auto;
 }
 
+/* Emblem header for nodes without a screenshot */
+.modal-emblem {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.modal-emblem__badge {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Contact link list */
+.modal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.modal-link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
+  background: #f4f6f0;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+.modal-link-row:hover {
+  background: #eaefe3;
+  transform: translateY(-1px);
+}
+.modal-link-row:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.modal-link-row__icon {
+  display: grid;
+  place-items: center;
+}
+.modal-link-row__go {
+  margin-left: auto;
+  color: var(--ink-soft);
+  opacity: 0.6;
+}
+.modal-links .btn {
+  margin-top: 0.3rem;
+}
+
 /* ---------- Animations ---------- */
 @keyframes pop-in {
   from {

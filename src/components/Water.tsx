@@ -27,7 +27,7 @@ export function Water() {
       geometry={geometry}
       material={material}
       rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, 0, 0]}
+      position={[0, WORLD.waterY, 0]}
       receiveShadow={false}
     />
   );

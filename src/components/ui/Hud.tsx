@@ -6,7 +6,7 @@ export function Hud() {
   const started = useStore((s) => s.started);
   const hasMoved = useStore((s) => s.hasMoved);
   const isTouch = useStore((s) => s.isTouch);
-  const modalOpen = useStore((s) => !!s.activeProject);
+  const modalOpen = useStore((s) => !!s.activeNode);
 
   if (!started) return null;
 

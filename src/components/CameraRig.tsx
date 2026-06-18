@@ -21,10 +21,12 @@ export function CameraRig() {
     const dt = Math.min(delta, 0.05);
     const k = 1 - Math.exp(-CAMERA.damping * dt);
 
+    // Optional zoom multiplier (debug / future setting).
+    const zoom = (window as unknown as { __camZoom?: number }).__camZoom ?? 1;
     desired.current.set(
-      frogState.position.x + CAMERA.offset[0],
-      CAMERA.offset[1],
-      frogState.position.z + CAMERA.offset[2],
+      frogState.position.x + CAMERA.offset[0] * zoom,
+      CAMERA.offset[1] * zoom,
+      frogState.position.z + CAMERA.offset[2] * zoom,
     );
     c.position.lerp(desired.current, k);
 

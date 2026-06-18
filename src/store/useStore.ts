@@ -1,68 +1,69 @@
 import { create } from 'zustand';
-import type { Project } from '../types';
+import type { NodeContent } from '../types';
+
+export interface ActiveNode {
+  id: string;
+  accent: string;
+  content: NodeContent;
+}
 
 interface GameState {
-  /** True once the asset loader has finished and the player presses start. */
+  /** True once the loader has finished and the player presses start. */
   started: boolean;
 
-  /** Pad the frog is currently close enough to interact with (or null). */
-  nearbyPadId: string | null;
-  /** Project whose modal is currently open (or null). */
-  activeProject: Project | null;
+  /** Island the frog is close enough to interact with (for highlighting). */
+  nearbyId: string | null;
+  /** Node whose modal is currently open (or null). */
+  activeNode: ActiveNode | null;
   /**
-   * The pad whose modal the player just dismissed. Prevents the modal from
-   * instantly re-opening; cleared once the frog leaves interaction range.
+   * Node whose modal was just dismissed — stops it instantly re-opening;
+   * cleared once the frog walks out of range.
    */
-  dismissedPadId: string | null;
+  dismissedId: string | null;
 
   /** Whether the player has moved the frog at least once. */
   hasMoved: boolean;
-  /** Ids of project pads the player has opened, for subtle "visited" styling. */
+  /** Ids of nodes the player has opened, for subtle "visited" styling. */
   visited: Set<string>;
 
   /** True on touch / coarse-pointer devices (drives the on-screen joystick). */
   isTouch: boolean;
 
   start: () => void;
-  setNearbyPad: (id: string | null) => void;
-  openProject: (project: Project) => void;
-  closeProject: () => void;
+  setNearby: (id: string | null) => void;
+  openNode: (node: ActiveNode) => void;
+  closeNode: () => void;
   markMoved: () => void;
   setTouch: (isTouch: boolean) => void;
 }
 
 export const useStore = create<GameState>((set, get) => ({
   started: false,
-  nearbyPadId: null,
-  activeProject: null,
-  dismissedPadId: null,
+  nearbyId: null,
+  activeNode: null,
+  dismissedId: null,
   hasMoved: false,
   visited: new Set<string>(),
   isTouch: false,
 
   start: () => set({ started: true }),
 
-  setNearbyPad: (id) => {
-    const { nearbyPadId, dismissedPadId } = get();
-    if (id === nearbyPadId) return;
-    // Leaving a pad's range clears its "dismissed" lock so it can reopen later.
-    const nextDismissed = id === null ? null : dismissedPadId;
-    set({ nearbyPadId: id, dismissedPadId: nextDismissed });
+  setNearby: (id) => {
+    const { nearbyId, dismissedId } = get();
+    if (id === nearbyId) return;
+    // Leaving a node's range clears its "dismissed" lock so it can reopen later.
+    set({ nearbyId: id, dismissedId: id === null ? null : dismissedId });
   },
 
-  openProject: (project) => {
+  openNode: (node) => {
     const visited = new Set(get().visited);
-    visited.add(project.id);
-    set({ activeProject: project, visited });
+    visited.add(node.id);
+    set({ activeNode: node, visited });
   },
 
-  closeProject: () => {
-    const active = get().activeProject;
-    set({
-      activeProject: null,
-      // Remember which pad we dismissed so it won't immediately pop again.
-      dismissedPadId: active ? active.id : get().dismissedPadId,
-    });
+  closeNode: () => {
+    const active = get().activeNode;
+    set({ activeNode: null, dismissedId: active ? active.id : get().dismissedId });
   },
 
   markMoved: () => {

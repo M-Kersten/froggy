@@ -1,10 +1,11 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { COLORS, WORLD } from '../../config';
+import { mulberry32, scatterWater } from '../../utils/scatter';
 
-const COUNT = 14;
+const COUNT = 22;
 
-/** A scattering of low-poly rocks resting at the pond's edge (static). */
+/** A scattering of low-poly rocks resting in the shallows around the islands. */
 export function Rocks() {
   const mesh = useRef<THREE.InstancedMesh>(null);
 
@@ -15,18 +16,18 @@ export function Rocks() {
   );
 
   const matrices = useMemo(() => {
+    const rng = mulberry32(202);
+    const points = scatterWater(COUNT, 0.1, rng);
     const dummy = new THREE.Object3D();
     const mats: THREE.Matrix4[] = [];
-    for (let i = 0; i < COUNT; i++) {
-      const angle = (i / COUNT) * Math.PI * 2 + Math.random() * 0.5;
-      const r = WORLD.playableRadius - 1 + Math.random() * 3;
-      dummy.position.set(Math.cos(angle) * r, -0.1, Math.sin(angle) * r);
-      dummy.rotation.set(Math.random(), Math.random() * Math.PI * 2, Math.random());
-      const s = 0.5 + Math.random() * 0.9;
-      dummy.scale.set(s * (1 + Math.random() * 0.4), s * (0.5 + Math.random() * 0.3), s);
+    points.forEach(([x, z]) => {
+      dummy.position.set(x, WORLD.waterY - 0.05, z);
+      dummy.rotation.set(rng(), rng() * Math.PI * 2, rng());
+      const s = 0.4 + rng() * 0.85;
+      dummy.scale.set(s * (1 + rng() * 0.4), s * (0.45 + rng() * 0.3), s);
       dummy.updateMatrix();
       mats.push(dummy.matrix.clone());
-    }
+    });
     return mats;
   }, []);
 
@@ -34,6 +35,7 @@ export function Rocks() {
     const m = mesh.current;
     if (!m) return;
     matrices.forEach((mat, i) => m.setMatrixAt(i, mat));
+    m.count = matrices.length;
     m.instanceMatrix.needsUpdate = true;
   }, [matrices]);
 

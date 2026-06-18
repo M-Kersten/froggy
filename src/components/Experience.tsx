@@ -1,6 +1,6 @@
 import { CameraRig } from './CameraRig';
 import { Water } from './Water';
-import { Pads } from './pads/Pads';
+import { Islands } from './islands/Islands';
 import { Frog } from './frog/Frog';
 import { FrogShadow } from './frog/FrogShadow';
 import { Particles } from './Particles';
@@ -10,22 +10,22 @@ import { Flowers } from './environment/Flowers';
 import { Dragonflies } from './environment/Dragonflies';
 import { COLORS } from '../config';
 
-/** The whole pond world, mounted inside the R3F Canvas. */
+/** The whole Japanese-garden pond world, mounted inside the R3F Canvas. */
 export function Experience() {
   return (
     <>
       <color attach="background" args={[COLORS.skyBottom]} />
-      <fog attach="fog" args={[COLORS.fog, 28, 56]} />
+      <fog attach="fog" args={[COLORS.fog, 30, 62]} />
 
       {/* Bright, soft daytime lighting. */}
-      <hemisphereLight args={[COLORS.skyTop, COLORS.reedDark, 1.0]} />
-      <directionalLight position={[8, 14, 6]} intensity={1.05} color="#fff6e6" />
-      <directionalLight position={[-6, 8, -4]} intensity={0.25} color={COLORS.waterShallow} />
+      <hemisphereLight args={[COLORS.skyTop, COLORS.dirtDark, 1.0]} />
+      <directionalLight position={[8, 16, 6]} intensity={1.0} color="#fff6e6" />
+      <directionalLight position={[-6, 9, -4]} intensity={0.22} color={COLORS.waterShallow} />
 
       <CameraRig />
 
       <Water />
-      <Pads />
+      <Islands />
 
       <Frog />
       <FrogShadow />

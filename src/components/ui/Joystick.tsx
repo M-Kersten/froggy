@@ -18,7 +18,7 @@ interface Stick {
 export function Joystick() {
   const isTouch = useStore((s) => s.isTouch);
   const started = useStore((s) => s.started);
-  const modalOpen = useStore((s) => !!s.activeProject);
+  const modalOpen = useStore((s) => !!s.activeNode);
   const [stick, setStick] = useState<Stick | null>(null);
 
   if (!isTouch || !started || modalOpen) return null;

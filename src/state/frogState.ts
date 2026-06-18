@@ -10,9 +10,11 @@ export const frogState = {
   /** Current world position (y is the hop height above the water). */
   position: new THREE.Vector3(FROG_START[0], 0, FROG_START[1]),
   /** Facing angle in radians (around the Y axis). */
-  facing: Math.PI, // looking "into" the pond (toward -Z) at the start
-  /** Whether the frog is mid-hop / actively moving. */
-  isMoving: false,
+  facing: Math.PI, // looking "into" the garden (toward -Z) at the start
+  /** Normalized walk speed 0..1 (drives the walk-cycle blend). */
+  speed: 0,
+  /** Walk-cycle phase in radians (advances with distance travelled). */
+  walkPhase: 0,
 };
 
 // Lightweight debug hook (used by the headless smoke test).

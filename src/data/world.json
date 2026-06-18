@@ -1,0 +1,138 @@
+{
+  "islands": [
+    {
+      "id": "introduction",
+      "type": "intro",
+      "label": "Introduction",
+      "number": 1,
+      "position": [0, 17],
+      "radius": 3.4,
+      "accent": "#8fe0a0",
+      "prop": "torii"
+    },
+    {
+      "id": "amsterdam-characters",
+      "type": "project",
+      "label": "Project 1",
+      "number": 2,
+      "position": [-5.5, 10.5],
+      "radius": 3.0,
+      "accent": "#ff8a5c",
+      "prop": "board",
+      "content": {
+        "title": "Amsterdam Characters",
+        "summary": "AI-generated digital residents that bring Amsterdam stories to life.",
+        "screenshot": "./screenshots/amsterdam-characters.svg",
+        "link": "https://merijnkersten.nl/work/amsterdam-characters",
+        "tag": "AI · Storytelling"
+      }
+    },
+    {
+      "id": "experiments",
+      "type": "info",
+      "label": "Experiments",
+      "position": [-13, 12.5],
+      "radius": 2.6,
+      "accent": "#6fc6b6",
+      "prop": "easel",
+      "content": {
+        "title": "Experiments",
+        "summary": "A sketchbook of small prototypes, shader studies and weekend builds.",
+        "tag": "Playground",
+        "link": "https://merijnkersten.nl/experiments"
+      }
+    },
+    {
+      "id": "xr-utility-explorer",
+      "type": "project",
+      "label": "Project 2",
+      "number": 3,
+      "position": [2, 5],
+      "radius": 3.0,
+      "accent": "#9b6dff",
+      "prop": "board",
+      "content": {
+        "title": "XR Utility Explorer",
+        "summary": "A mixed reality experience for understanding underground infrastructure.",
+        "screenshot": "./screenshots/xr-utility-explorer.svg",
+        "link": "https://merijnkersten.nl/work/xr-utility-explorer",
+        "tag": "Mixed Reality"
+      }
+    },
+    {
+      "id": "talks",
+      "type": "info",
+      "label": "Talks",
+      "position": [10, 7],
+      "radius": 2.6,
+      "accent": "#f2b45c",
+      "prop": "mic",
+      "content": {
+        "title": "Talks & Workshops",
+        "summary": "Sessions on spatial computing, playful interaction and creative AI.",
+        "tag": "Speaking",
+        "link": "https://merijnkersten.nl/talks"
+      }
+    },
+    {
+      "id": "vision-pro-prototype",
+      "type": "project",
+      "label": "Project 3",
+      "number": 4,
+      "position": [-3.5, -1.5],
+      "radius": 3.0,
+      "accent": "#4fc3f7",
+      "prop": "board",
+      "content": {
+        "title": "Vision Pro Prototype",
+        "summary": "Spatial computing experiments built for Apple Vision Pro.",
+        "screenshot": "./screenshots/vision-pro-prototype.svg",
+        "link": "https://merijnkersten.nl/work/vision-pro-prototype",
+        "tag": "Spatial Computing"
+      }
+    },
+    {
+      "id": "devlog",
+      "type": "info",
+      "label": "Devlog",
+      "position": [-11, -2.5],
+      "radius": 2.6,
+      "accent": "#a0d468",
+      "prop": "book",
+      "content": {
+        "title": "Devlog",
+        "summary": "Notes and behind-the-scenes writing on the things I'm making.",
+        "tag": "Writing",
+        "link": "https://merijnkersten.nl/devlog"
+      }
+    },
+    {
+      "id": "contact",
+      "type": "contact",
+      "label": "Contact",
+      "position": [1.5, -8.5],
+      "radius": 3.0,
+      "accent": "#5fc7d4",
+      "prop": "signs",
+      "content": {
+        "title": "Say hello",
+        "summary": "Let's make something playful together — I'm always up for a chat.",
+        "links": [
+          { "label": "Email", "url": "mailto:info@merijnkersten.nl", "icon": "mail" },
+          { "label": "GitHub", "url": "https://github.com/m-kersten", "icon": "github" },
+          { "label": "LinkedIn", "url": "https://www.linkedin.com/in/merijnkersten", "icon": "linkedin" },
+          { "label": "YouTube", "url": "https://youtube.com/@merijnkersten", "icon": "youtube" }
+        ]
+      }
+    }
+  ],
+  "bridges": [
+    { "from": "introduction", "to": "amsterdam-characters" },
+    { "from": "amsterdam-characters", "to": "experiments" },
+    { "from": "amsterdam-characters", "to": "xr-utility-explorer" },
+    { "from": "xr-utility-explorer", "to": "talks" },
+    { "from": "xr-utility-explorer", "to": "vision-pro-prototype" },
+    { "from": "vision-pro-prototype", "to": "devlog" },
+    { "from": "vision-pro-prototype", "to": "contact" }
+  ]
+}

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { registerSplash } from '../state/particles';
-import { COLORS } from '../config';
 
 const POOL = 150;
 const GRAVITY = 9;
@@ -32,9 +31,10 @@ export function Particles() {
   const material = useMemo(
     () =>
       new THREE.MeshBasicMaterial({
-        color: COLORS.waterHighlight,
+        // Soft pale dust that reads on both grass and water.
+        color: '#eef0e0',
         transparent: true,
-        opacity: 0.92,
+        opacity: 0.85,
         depthWrite: false,
         toneMapped: false,
       }),

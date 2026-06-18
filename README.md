@@ -1,31 +1,40 @@
-# 🐸 Froggy — an interactive pond portfolio
+# 🐸 Froggy — an interactive Japanese-garden portfolio
 
-A portfolio website that feels like a small, polished game. You guide a cute
-low-poly frog around a top-down pond with **WASD / arrow keys** (or by dragging
-on touch), hopping between lily pads that act as portfolio entries. Reaching a
-project pad opens a clean modal with the details.
+A portfolio website that feels like a small, calm game. You guide a cute,
+humanoid frog through a miniature Japanese garden — walking it across **large
+grassy islands** linked by **little wooden bridges** with **WASD / arrow keys**
+(or by dragging on touch). Each island is a portfolio stop; reaching one gently
+opens a clean modal. The frog never steps into the water.
+
+The garden flows from the **Introduction** island at the bottom and branches
+upward — Projects on the main path, with side islands for Experiments, Devlog,
+Talks and Contact — so exploring naturally reveals more.
 
 Built with **React Three Fiber + Three.js + TypeScript**, with a custom water
-shader, instanced foliage, and a shared, render-loop-friendly state model.
+shader, instanced foliage, a walkable-surface movement system and a
+render-loop-friendly state model.
 
-## ✨ Features
+## ✨ Highlights
 
-- **Top-down pond** with a custom GLSL water shader: gentle swell, stylized
-  lighting, and expanding ripples around the frog + on every landing.
-- **Cute frog mascot** with idle breathing, blinking, chained froggy hops, and
-  squash-&-stretch — it faces its movement direction and kicks up a little
-  splash when it lands.
-- **Smooth follow camera** — fixed top-down framing with a touch of lag, no
-  rotation, no free controls.
-- **Lily pads as content**: an intro pad (title, copy, animated WASD keys, a
-  guiding arrow, a pulsing rim) and three project pads (title, screenshot
-  preview, one-liner, Read More). Pads bob, highlight, and scale as you near
-  them, and the project modal opens automatically.
-- **Sparse, intentional life**: swaying reeds (instanced + wind shader),
-  drifting flowers, looping dragonflies, scattered rocks.
-- **Minimal, accessible UI**: animated start screen, modal with focus handling
-  and Escape/backdrop close, fading hints, and a floating touch joystick.
-- **Mobile friendly & responsive**, with bundled fonts (no CDN dependency).
+- **Humanoid frog** — walks on two legs with a leg/arm walk-cycle, body bob,
+  idle breathing + blinking, simple clothes, a neckerchief and a little
+  backpack. Big top-mounted eyes keep it reading as a frog from above.
+- **Stays on land** — movement is constrained to the union of island discs and
+  bridge strips, with gentle wall-sliding along edges, so the frog never enters
+  the pond.
+- **Japanese-garden world** — large grassy islands with overhanging turf,
+  curved wooden bridges, a torii gate, stone lanterns, cherry-blossom trees,
+  bamboo, rocks and reeds. Calm colours, open space, nothing cluttered.
+- **Branching layout** — a data-driven set of islands + bridges flowing
+  bottom→top, with small decorative lily pads tracing the routes between pads.
+- **Follow camera** — strict top-down with a touch of tilt + lag, mid-zoom so a
+  couple of islands and their bridges are in frame at once.
+- **Calm water** — a custom GLSL shader (gentle swell, stylized lighting,
+  ambient ripples) one plane deep.
+- **Minimal, accessible UI** — animated start screen, a modal that adapts to
+  projects (screenshot + link), info nodes (link) and contact (icon link list),
+  with focus handling and Escape/backdrop close. Bundled fonts (no CDN).
+- **Mobile friendly** — floating touch joystick, responsive layout.
 
 ## 🚀 Getting started
 
@@ -36,62 +45,85 @@ npm run build      # typecheck + production build into dist/
 npm run preview    # serve the production build locally
 ```
 
-## 🧩 Adding a project
+## 🧩 Editing the garden
 
-Project content lives in [`src/data/projects.json`](src/data/projects.json) —
-no component changes required. Append an entry to `projects`:
+The whole layout is data-driven in [`src/data/world.json`](src/data/world.json):
+an array of `islands` and the `bridges` (by id) that connect them. Add an island
+and a bridge and everything — the grass, label, number badge, decorative prop,
+proximity modal, the walkable surface and the lily-pad trail — updates
+automatically.
 
 ```jsonc
+// islands[]
 {
-  "id": "my-project",                       // unique; used as the pad id
-  "title": "My Project",
-  "description": "One sentence shown on the pad.",
-  "summary": "One sentence shown in the modal.",
-  "screenshot": "./screenshots/my-project.svg", // drop the file in public/screenshots
-  "link": "https://example.com/my-project",
-  "tag": "Category",                        // optional pill in the modal
-  "position": [6, 4],                        // [x, z] on the pond
-  "accent": "#ff8a5c"                        // pad highlight + tag color
+  "id": "my-project",
+  "type": "project",           // intro | project | info | contact
+  "label": "Project 5",
+  "number": 5,                  // optional badge (main-path nodes)
+  "position": [6, -4],          // [x, z]; bottom = +z, top = -z
+  "radius": 3.0,
+  "accent": "#ff8a5c",
+  "prop": "board",              // torii | board | easel | book | mic | signs
+  "content": {                  // omit for the intro island
+    "title": "My Project",
+    "summary": "One sentence shown in the modal.",
+    "screenshot": "./screenshots/my-project.svg",  // optional (public/screenshots)
+    "link": "https://example.com",
+    "tag": "Category"
+    // contact nodes use `links: [{ label, url, icon }]` instead
+  }
 }
+
+// bridges[]
+{ "from": "vision-pro-prototype", "to": "my-project" }
 ```
 
-Pick a `position` within the playable radius (see `WORLD.playableRadius` in
-`src/config.ts`) and spaced from other pads so their interaction ranges don't
-overlap. The pad, its preview, label and modal are generated automatically.
+Tip: space islands so their interaction ranges don't overlap, and keep bridge
+spans a couple of units long for readable connectors.
 
 ## 🏗️ Architecture
 
 ```
 src/
-├── config.ts              # world tuning + shared color palette
-├── data/                  # projects.json + loader
-├── store/useStore.ts      # zustand: UI/discrete state (modal, nearby pad…)
-├── state/                 # per-frame singletons (frog transform, ripples, particles)
-├── input/                 # keyboard + shared movement vector (joystick writes here too)
-├── shaders/               # water + wind (vertex sway) materials
-├── utils/                 # math easing, lily-pad geometry, fonts
+├── config.ts                 # world tuning + shared color palette
+├── data/                     # world.json + loader (islands, bridges, segments)
+├── store/useStore.ts         # zustand: UI/discrete state (modal, nearby node…)
+├── state/                    # per-frame singletons: frog transform, walkable
+│                             #   surface, ripples, particles
+├── input/                    # keyboard + shared movement vector (joystick too)
+├── shaders/                  # water + wind (vertex sway) materials
+├── utils/                    # easing, lily-pad geometry, seeded scatter, fonts
 └── components/
-    ├── Experience.tsx     # the scene graph (lights, fog, everything)
-    ├── CameraRig.tsx      # top-down follow camera
-    ├── Water.tsx          # shader-driven pond surface
-    ├── Particles.tsx      # pooled splash/dust
-    ├── frog/              # Frog controller + model + soft shadow
-    ├── pads/              # LilyPad, intro content, project content, proximity
-    ├── environment/       # reeds, rocks, flowers, dragonflies
-    └── ui/                # StartScreen, Modal, Hud, Joystick (DOM overlay)
+    ├── Experience.tsx        # the scene graph (lights, fog, everything)
+    ├── CameraRig.tsx         # top-down follow camera
+    ├── Water.tsx             # shader-driven pond surface
+    ├── Particles.tsx         # pooled dust puffs
+    ├── frog/                 # walking controller + humanoid model + soft shadow
+    ├── islands/              # Island, Bridge, content, props, SmallLilies, manager
+    ├── environment/          # reeds, rocks, flowers, dragonflies
+    │   └── japanese/         # torii, stone lantern, cherry tree, bamboo
+    └── ui/                   # StartScreen, Modal, Hud, Joystick (DOM overlay)
 ```
 
-**Performance notes.** The frog transform, ripples and particles live in plain
-module singletons and are mutated inside the R3F frame loop, so continuous
-motion never triggers React re-renders — the store is only touched for discrete
-events (modal open/close, "nearby pad" changes). Foliage is instanced, the
-water is a single shader plane, and shadows are faked with a cheap blob.
+**Movement / walkable surface.** `state/walkable.ts` builds the walkable area
+from the island discs (shrunk by an edge margin) and bridge strips. The frog
+controller attempts each step and slides along an axis if blocked, so it hugs
+the land and never enters the water.
+
+**Performance.** The frog transform, ripples and particles live in plain module
+singletons mutated inside the R3F frame loop, so continuous motion never
+triggers React re-renders — the store is only touched for discrete events
+(modal open/close, "nearby node" changes). Foliage + lily pads are instanced,
+scenery is scattered with a seeded RNG (stable across reloads), the water is a
+single shader plane, and shadows are faked with a cheap blob. Vendors are split
+into cacheable chunks.
 
 ## 🧪 Optional smoke test
 
-`scripts/smoke.mjs` boots the built app in headless Chromium, starts it, drives
-the frog, and asserts the project modal opens/closes while capturing console
-errors + screenshots. It needs Puppeteer (kept out of the project deps):
+`scripts/smoke.mjs` boots the built app in headless Chromium, starts it, walks
+the frog and teleports it onto islands to verify the project + contact modals,
+capturing console errors + screenshots. It needs Puppeteer (kept out of project
+deps):
 
 ```bash
 npm i -D puppeteer

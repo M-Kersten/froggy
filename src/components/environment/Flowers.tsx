@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { COLORS, WORLD } from '../../config';
+import { mulberry32, scatterWater } from '../../utils/scatter';
 
 interface FlowerData {
   pos: [number, number];
@@ -17,55 +18,48 @@ function Flower({ data }: { data: FlowerData }) {
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     if (ref.current) {
-      ref.current.position.y = 0.06 + Math.sin(t * 1.1 + data.phase) * 0.04;
+      ref.current.position.y = WORLD.waterY + 0.06 + Math.sin(t * 1.1 + data.phase) * 0.03;
       ref.current.rotation.y = t * 0.15 + data.phase;
-      ref.current.rotation.x = Math.sin(t * 0.8 + data.phase) * 0.06;
+      ref.current.rotation.x = Math.sin(t * 0.8 + data.phase) * 0.05;
     }
   });
 
   return (
-    <group ref={ref} position={[data.pos[0], 0.06, data.pos[1]]} scale={data.scale}>
-      {/* small lily-pad-ish leaf under the flower */}
+    <group ref={ref} position={[data.pos[0], WORLD.waterY + 0.06, data.pos[1]]} scale={data.scale}>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
-        <circleGeometry args={[0.34, 12]} />
-        <meshStandardMaterial color={COLORS.padDark} roughness={0.8} />
+        <circleGeometry args={[0.32, 12]} />
+        <meshStandardMaterial color={COLORS.lily} roughness={0.85} />
       </mesh>
       {petals.map((a, i) => (
         <mesh
           key={i}
-          position={[Math.cos(a) * 0.13, 0.05, Math.sin(a) * 0.13]}
+          position={[Math.cos(a) * 0.12, 0.05, Math.sin(a) * 0.12]}
           rotation={[0, -a, 0]}
-          scale={[0.1, 0.05, 0.17]}
+          scale={[0.1, 0.05, 0.16]}
         >
           <sphereGeometry args={[1, 8, 6]} />
           <meshStandardMaterial color={data.petalColor} flatShading roughness={0.7} />
         </mesh>
       ))}
       <mesh position={[0, 0.08, 0]}>
-        <sphereGeometry args={[0.08, 10, 8]} />
+        <sphereGeometry args={[0.07, 10, 8]} />
         <meshStandardMaterial color={COLORS.flowerYellow} flatShading roughness={0.6} />
       </mesh>
     </group>
   );
 }
 
-/** A handful of small flowers drifting on the water surface. */
+/** A handful of small flowers drifting on the water around the garden. */
 export function Flowers() {
   const flowers = useMemo<FlowerData[]>(() => {
     const palette = [COLORS.flowerPink, COLORS.flowerWhite, COLORS.flowerPink];
-    const out: FlowerData[] = [];
-    const count = 9;
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const r = 3 + Math.random() * (WORLD.playableRadius - 4);
-      out.push({
-        pos: [Math.cos(angle) * r, Math.sin(angle) * r],
-        petalColor: palette[i % palette.length],
-        phase: Math.random() * Math.PI * 2,
-        scale: 0.8 + Math.random() * 0.6,
-      });
-    }
-    return out;
+    const rng = mulberry32(303);
+    return scatterWater(10, 0.4, rng).map((pos, i) => ({
+      pos,
+      petalColor: palette[i % palette.length],
+      phase: rng() * Math.PI * 2,
+      scale: 0.75 + rng() * 0.5,
+    }));
   }, []);
 
   return (

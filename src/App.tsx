@@ -10,7 +10,7 @@ import { useKeyboardControls } from './input/useKeyboardControls';
 
 export default function App() {
   const started = useStore((s) => s.started);
-  const modalOpen = useStore((s) => !!s.activeProject);
+  const modalOpen = useStore((s) => !!s.activeNode);
   const setTouch = useStore((s) => s.setTouch);
 
   // Movement is live only while playing and no modal is open.
