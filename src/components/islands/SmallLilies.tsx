@@ -1,12 +1,12 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { getLilyPadGeometry } from '../../utils/lilyPadGeometry';
-import { bridgeSegments } from '../../data/useWorld';
+import { bridgeCurves } from '../../data/useWorld';
 import { isWalkable } from '../../state/walkable';
 import { mulberry32, scatterWater } from '../../utils/scatter';
 import { COLORS, WORLD } from '../../config';
 
-const MAX = 140;
+const MAX = 260;
 
 interface Lily {
   x: number;
@@ -33,7 +33,7 @@ export function SmallLilies() {
     const out: Lily[] = [];
 
     // Stepping-stone trails flanking each bridge.
-    for (const { from, to } of bridgeSegments) {
+    for (const { from, to } of bridgeCurves) {
       const ax = from.position[0];
       const az = from.position[1];
       const dx = to.position[0] - ax;
@@ -41,12 +41,12 @@ export function SmallLilies() {
       const len = Math.hypot(dx, dz) || 1;
       const px = -dz / len;
       const pz = dx / len;
-      const steps = Math.max(3, Math.round(len / 0.85));
+      const steps = Math.max(4, Math.round(len / 0.6));
       for (let i = 1; i < steps; i++) {
         const t = i / steps;
         const cx = ax + dx * t;
         const cz = az + dz * t;
-        for (const base of [1.05, -1.35]) {
+        for (const base of [0.95, -1.2, 1.7]) {
           const off = base * (0.8 + rng() * 0.6);
           const x = cx + px * off;
           const z = cz + pz * off;
@@ -58,7 +58,7 @@ export function SmallLilies() {
     }
 
     // A few extra pads drifting in open water.
-    for (const [x, z] of scatterWater(16, 0.5, rng)) {
+    for (const [x, z] of scatterWater(28, 0.6, rng)) {
       if (out.length < MAX) out.push({ x, z, s: 0.4 + rng() * 0.5, rot: rng() * Math.PI * 2 });
     }
 

@@ -1,4 +1,5 @@
-import { islands, bridgeSegments } from '../data/useWorld';
+import { islands, bridgeCurves } from '../data/useWorld';
+import { sampleQuadBezier } from '../utils/curve';
 import { WORLD } from '../config';
 
 interface Disc {
@@ -15,9 +16,9 @@ interface Segment {
 }
 
 /**
- * The walkable surface = the union of island discs (shrunk by an edge margin so
- * the frog stays on the grass) and bridge strips. The frog can never leave it,
- * which keeps it out of the water.
+ * The walkable surface = island discs (shrunk by an edge margin so the frog
+ * stays on the grass) ∪ curved bridge strips (each bézier sampled into short
+ * segments). The frog can never leave it, which keeps it out of the water.
  */
 const discs: Disc[] = islands.map((i) => ({
   x: i.position[0],
@@ -25,13 +26,21 @@ const discs: Disc[] = islands.map((i) => ({
   r: i.radius - WORLD.edgeMargin,
 }));
 
-const segments: Segment[] = bridgeSegments.map(({ from, to }) => {
-  const ax = from.position[0];
-  const az = from.position[1];
-  const bx = to.position[0];
-  const bz = to.position[1];
-  return { ax, az, bx, bz, hw: WORLD.bridgeHalfWidth };
-});
+const segments: Segment[] = [];
+for (const c of bridgeCurves) {
+  const span = Math.hypot(c.p2[0] - c.p0[0], c.p2[1] - c.p0[1]);
+  const n = Math.max(2, Math.round(span / 1.1));
+  const pts = sampleQuadBezier(c.p0, c.p1, c.p2, n);
+  for (let i = 0; i < pts.length - 1; i++) {
+    segments.push({
+      ax: pts[i][0],
+      az: pts[i][1],
+      bx: pts[i + 1][0],
+      bz: pts[i + 1][1],
+      hw: WORLD.bridgeHalfWidth,
+    });
+  }
+}
 
 function insideDisc(x: number, z: number, d: Disc): boolean {
   const dx = x - d.x;

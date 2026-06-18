@@ -18,7 +18,7 @@ export function Experience() {
       <fog attach="fog" args={[COLORS.fog, 30, 62]} />
 
       {/* Bright, soft daytime lighting. */}
-      <hemisphereLight args={[COLORS.skyTop, COLORS.dirtDark, 1.0]} />
+      <hemisphereLight args={[COLORS.skyTop, COLORS.soilDark, 1.0]} />
       <directionalLight position={[8, 16, 6]} intensity={1.0} color="#fff6e6" />
       <directionalLight position={[-6, 9, -4]} intensity={0.22} color={COLORS.waterShallow} />
 

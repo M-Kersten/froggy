@@ -47,6 +47,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uColorShallow;
   uniform vec3 uColorHighlight;
   uniform vec3 uLightDir;
+  uniform vec2 uCenter;
   uniform vec4 uRipples[MAX_RIPPLES];
 
   varying vec3 vWorldPos;
@@ -56,23 +57,25 @@ const fragmentShader = /* glsl */ `
   void main() {
     vec3 normal = normalize(vNormal);
 
-    // Depth gradient: a touch deeper / cooler toward the pond edges.
-    float distC = length(vWorldPos.xz);
-    float depth = smoothstep(0.0, 17.0, distC);
-    vec3 base = mix(uColorShallow, uColorDeep, depth * 0.85);
+    // Strong depth gradient from the garden centre → dark edges make land pop.
+    float distC = length(vWorldPos.xz - uCenter);
+    float depth = smoothstep(3.0, 30.0, distC);
+    vec3 base = mix(uColorShallow, uColorDeep, depth);
+    // extra darkening far out for contrast / focus
+    base *= 1.0 - smoothstep(20.0, 40.0, distC) * 0.35;
 
-    // Wave crests catch the light.
-    base = mix(base, uColorHighlight, smoothstep(0.06, 0.16, vHeight) * 0.5);
+    // Wave crests catch the light (subtle, calm water).
+    base = mix(base, uColorHighlight, smoothstep(0.07, 0.16, vHeight) * 0.35);
 
-    // Soft diffuse + a top-down specular sparkle on the crests.
+    // Soft diffuse + a restrained top-down specular sparkle on the crests.
     vec3 L = normalize(uLightDir);
     float diff = clamp(dot(normal, L) * 0.5 + 0.5, 0.0, 1.0);
-    vec3 color = base * (0.80 + 0.20 * diff);
+    vec3 color = base * (0.82 + 0.18 * diff);
 
     vec3 V = vec3(0.0, 1.0, 0.0);
     vec3 H = normalize(L + V);
-    float spec = pow(clamp(dot(normal, H), 0.0, 1.0), 60.0);
-    color += vec3(spec) * 0.30;
+    float spec = pow(clamp(dot(normal, H), 0.0, 1.0), 70.0);
+    color += vec3(spec) * 0.22;
 
     // Expanding concentric ripples from the shared buffer.
     float ripple = 0.0;
@@ -107,6 +110,7 @@ export function createWaterMaterial(): THREE.ShaderMaterial {
       uColorShallow: { value: new THREE.Color(COLORS.waterShallow) },
       uColorHighlight: { value: new THREE.Color(COLORS.waterHighlight) },
       uLightDir: { value: new THREE.Vector3(0.4, 1.0, 0.3).normalize() },
+      uCenter: { value: new THREE.Vector2(0, 0) },
       uRipples: { value: rippleData },
     },
   });

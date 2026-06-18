@@ -5,21 +5,25 @@
  */
 
 export const COLORS = {
-  // Water (calm, slightly muted blue-green)
-  waterDeep: '#2a7f97',
-  waterShallow: '#5cb9c4',
-  waterHighlight: '#bfeef0',
+  // Water (deep + cool so the bright land masses pop)
+  waterDeep: '#103a48',
+  waterShallow: '#2b8193',
+  waterHighlight: '#74cbd2',
 
   // Sky / ambient
   skyTop: '#cdeef0',
-  skyBottom: '#eef8f0',
-  fog: '#d4eef0',
+  skyBottom: '#e7f4ee',
+  fog: '#c4e6e9',
 
   // Islands
-  grass: '#86c25c',
-  grassDark: '#5fa244',
-  dirt: '#a07a4c',
-  dirtDark: '#7c5c36',
+  grass: '#8cca58',
+  grassDark: '#5f9e3f',
+  grassShade: '#3f7d35',
+  soil: '#9c7647',
+  soilDark: '#6f5230',
+  rockBase: '#7d756a',
+  sand: '#e7d6a6',
+  sandDark: '#cdb37e',
   moss: '#6fae4d',
 
   // Frog (humanoid)
@@ -37,6 +41,7 @@ export const COLORS = {
   // Japanese garden props
   wood: '#b07c45',
   woodDark: '#7f5528',
+  bridgeRed: '#c75a48',
   cherry: '#f6b6d0',
   cherryDeep: '#ec9bbd',
   trunk: '#8a5a3c',
@@ -47,16 +52,20 @@ export const COLORS = {
   bambooDark: '#6fa043',
 
   // Foliage / props
-  reed: '#5fae5f',
-  reedDark: '#43904c',
-  rock: '#a3aaa6',
-  rockDark: '#828a86',
+  reed: '#56a557',
+  reedDark: '#3f8848',
+  rock: '#9aa29c',
+  rockDark: '#79817b',
 
   // Flowers / lilies
   lily: '#4f9e58',
+  lilyDeep: '#3c8348',
   flowerPink: '#f7a8c4',
   flowerWhite: '#fdfdfb',
   flowerYellow: '#ffd25a',
+
+  // Board / sign surfaces
+  panel: '#f4ecd8',
 
   // Dragonfly
   dragonfly: '#4fb6c9',
@@ -66,46 +75,40 @@ export const COLORS = {
 /** Pond + gameplay tuning. */
 export const WORLD = {
   /** Visual size of the water plane (square). */
-  waterSize: 80,
+  waterSize: 110,
   /** Water surface height (islands rise above it; their grass tops are at y = 0). */
-  waterY: -0.4,
+  waterY: -0.45,
 
   /** Frog walking. */
-  walkSpeed: 3.7,
-  /** Acceleration / deceleration smoothing (higher = snappier). */
+  walkSpeed: 3.9,
   walkAccel: 9,
-  /** Facing turn smoothing. */
   turnSpeed: 12,
-  /** Margin kept between the frog and an island/bridge edge (so it stays on land). */
-  edgeMargin: 0.32,
+  /** Margin kept between the frog and an island/bridge edge. */
+  edgeMargin: 0.35,
   /** Half-width of a bridge's walkable strip. */
-  bridgeHalfWidth: 0.62,
-
-  /** Distance (from island center, normalized by radius) at which a node opens. */
-  interactRangePad: 1.0,
-  /** Extra range (beyond the island radius) at which a node highlights. */
-  hintRangePad: 2.2,
+  bridgeHalfWidth: 0.72,
 } as const;
 
-/** Camera framing — top-down with a gentle tilt, following the frog at mid-zoom. */
+/**
+ * Camera framing — top-down with a gentle tilt, following the frog closely so
+ * only a little of the world is visible at once (discovery through movement).
+ */
 export const CAMERA = {
-  /** Offset from the frog: high up, slightly toward the viewer for a touch of depth. */
-  offset: [0, 14.5, 4.8] as [number, number, number],
-  /** Field of view (narrow-ish keeps the look close to top-down). */
-  fov: 44,
+  offset: [0, 12, 4.0] as [number, number, number],
+  fov: 42,
   /** Follow smoothing (higher = snappier). */
-  damping: 3.0,
+  damping: 2.8,
 } as const;
 
 export const INTRO_ID = 'introduction';
 
 /** Rough rectangular extent of the garden, used to scatter water decoration. */
 export const GARDEN_BOUNDS = {
-  minX: -15.5,
-  maxX: 12.5,
-  minZ: -11.5,
-  maxZ: 19.5,
+  minX: -20,
+  maxX: 20,
+  minZ: -30,
+  maxZ: 24,
 } as const;
 
-/** Frog start: on the intro island, toward the viewer so it doesn't cover the copy. */
-export const FROG_START: [number, number] = [0, 17.8];
+/** Frog start: on the intro hub, toward the viewer so it doesn't cover the copy. */
+export const FROG_START: [number, number] = [0, 23];

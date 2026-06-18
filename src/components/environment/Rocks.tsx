@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { COLORS, WORLD } from '../../config';
 import { mulberry32, scatterWater } from '../../utils/scatter';
 
-const COUNT = 22;
+const COUNT = 12;
 
 /** A scattering of low-poly rocks resting in the shallows around the islands. */
 export function Rocks() {

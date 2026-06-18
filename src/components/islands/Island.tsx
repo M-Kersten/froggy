@@ -1,8 +1,10 @@
 import { useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { BlobShadow } from '../effects/BlobShadow';
 import { useStore } from '../../store/useStore';
-import { COLORS } from '../../config';
+import { COLORS, WORLD } from '../../config';
+import { mulberry32 } from '../../utils/scatter';
 import { damp } from '../../utils/math';
 
 interface IslandProps {
@@ -11,37 +13,59 @@ interface IslandProps {
   radius: number;
   accent: string;
   children?: ReactNode;
-  /** Always-on gentle pulse to draw the eye (used by the intro island). */
-  pulse?: boolean;
 }
 
 /**
- * A large grassy island: a tapered dirt base with an overhanging grass cap,
- * a gentle bob, and a proximity highlight ring. The grass surface sits at y≈0
- * so the frog walks on top of it. Decorative content is laid on the grass.
+ * A solid, layered grassy island: a sandy shoreline, a thick tapered soil body
+ * (visible bevelled sides), a flat grass top with a softly shaded rim, a few
+ * edge rocks and a soft drop shadow on the water. No glowing outline — approach
+ * feedback is a subtle lift + scale.
  */
-export function Island({ id, position, radius, accent, children, pulse = false }: IslandProps) {
+export function Island({ id, position, radius, accent: _accent, children }: IslandProps) {
   const bob = useRef<THREE.Group>(null);
   const scaler = useRef<THREE.Group>(null);
-  const ringMat = useRef<THREE.MeshBasicMaterial>(null);
   const highlight = useRef(0);
 
-  const dirtGeo = useMemo(
-    () => new THREE.CylinderGeometry(radius * 0.98, radius * 0.84, 1.0, 26),
-    [radius],
-  );
-  const grassGeo = useMemo(
-    () => new THREE.CylinderGeometry(radius + 0.06, radius + 0.06, 0.16, 28),
-    [radius],
-  );
+  const geo = useMemo(() => {
+    const grassTopY = 0.12;
+    return {
+      sand: new THREE.CylinderGeometry(radius + 0.45, radius + 0.64, 0.2, 30),
+      soil: new THREE.CylinderGeometry(radius, radius * 0.82, 0.74, 28),
+      grass: new THREE.CylinderGeometry(radius, radius, 0.14, 30),
+      rim: new THREE.TorusGeometry(radius, 0.1, 8, 34),
+      grassTopY,
+    };
+  }, [radius]);
+
   const mats = useMemo(
     () => ({
-      dirt: new THREE.MeshStandardMaterial({ color: COLORS.dirt, flatShading: true, roughness: 0.95 }),
+      sand: new THREE.MeshStandardMaterial({ color: COLORS.sand, flatShading: true, roughness: 0.95 }),
+      soil: new THREE.MeshStandardMaterial({ color: COLORS.soil, flatShading: true, roughness: 0.95 }),
       grass: new THREE.MeshStandardMaterial({ color: COLORS.grass, roughness: 0.85 }),
+      grassDark: new THREE.MeshStandardMaterial({ color: COLORS.grassDark, flatShading: true, roughness: 0.85 }),
+      rock: new THREE.MeshStandardMaterial({ color: COLORS.rock, flatShading: true, roughness: 0.95 }),
     }),
     [],
   );
-  const accentColor = useMemo(() => new THREE.Color(accent), [accent]);
+
+  const rocks = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 100000;
+    const rng = mulberry32(h + 7);
+    const count = 4 + Math.floor(rng() * 3);
+    return Array.from({ length: count }, () => {
+      const a = rng() * Math.PI * 2;
+      const rr = radius + 0.2 + rng() * 0.35;
+      const s = 0.32 + rng() * 0.4;
+      return {
+        x: Math.cos(a) * rr,
+        z: Math.sin(a) * rr,
+        s,
+        ry: rng() * Math.PI,
+        sy: 0.5 + rng() * 0.3,
+      };
+    });
+  }, [id, radius]);
 
   const phase = useMemo(() => {
     let h = 0;
@@ -53,43 +77,48 @@ export function Island({ id, position, radius, accent, children, pulse = false }
     const time = state.clock.elapsedTime;
     const dt = Math.min(delta, 0.05);
     if (bob.current) {
-      bob.current.position.y = Math.sin(time * 0.8 + phase) * 0.04;
-      bob.current.rotation.x = Math.sin(time * 0.6 + phase) * 0.012;
-      bob.current.rotation.z = Math.cos(time * 0.5 + phase) * 0.012;
+      bob.current.position.y = Math.sin(time * 0.7 + phase) * 0.025;
+      bob.current.rotation.z = Math.cos(time * 0.5 + phase) * 0.006;
     }
-
     const target = useStore.getState().nearbyId === id ? 1 : 0;
     highlight.current = damp(highlight.current, target, 8, dt);
-    const h = highlight.current;
-    if (scaler.current) scaler.current.scale.setScalar(1 + h * 0.03);
-    if (ringMat.current) {
-      const pulseAmt = pulse ? 0.25 + 0.2 * (0.5 + 0.5 * Math.sin(time * 2.2)) : 0;
-      ringMat.current.opacity = Math.max(h * 0.85, pulseAmt);
+    if (scaler.current) {
+      const h = highlight.current;
+      scaler.current.scale.setScalar(1 + h * 0.022);
+      scaler.current.position.y = h * 0.07;
     }
   });
 
   return (
     <group position={[position[0], 0, position[1]]}>
+      {/* Soft drop shadow on the water grounds the island. */}
+      <BlobShadow radius={radius + 0.8} position={[0, WORLD.waterY + 0.03, 0]} opacity={0.32} />
+
       <group ref={bob}>
         <group ref={scaler}>
-          <mesh geometry={dirtGeo} material={mats.dirt} position={[0, -0.5, 0]} />
-          <mesh geometry={grassGeo} material={mats.grass} position={[0, -0.05, 0]} />
+          {/* Sandy shoreline at the waterline */}
+          <mesh geometry={geo.sand} material={mats.sand} position={[0, WORLD.waterY + 0.12, 0]} />
+          {/* Thick tapered soil body (visible sides) */}
+          <mesh geometry={geo.soil} material={mats.soil} position={[0, geo.grassTopY - 0.07 - 0.37, 0]} />
+          {/* Grass top + softly shaded rounded rim */}
+          <mesh geometry={geo.grass} material={mats.grass} position={[0, geo.grassTopY - 0.07, 0]} />
+          <mesh geometry={geo.rim} material={mats.grassDark} rotation={[Math.PI / 2, 0, 0]} position={[0, geo.grassTopY - 0.02, 0]} />
 
-          {/* Proximity / pulse highlight ring */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]}>
-            <ringGeometry args={[radius + 0.12, radius + 0.34, 56]} />
-            <meshBasicMaterial
-              ref={ringMat}
-              color={accentColor}
-              transparent
-              opacity={0}
-              side={THREE.DoubleSide}
-              depthWrite={false}
-            />
-          </mesh>
+          {/* Natural edge rocks */}
+          {rocks.map((r, i) => (
+            <mesh
+              key={i}
+              material={mats.rock}
+              position={[r.x, WORLD.waterY + 0.16, r.z]}
+              rotation={[0, r.ry, 0]}
+              scale={[r.s, r.s * r.sy, r.s]}
+            >
+              <dodecahedronGeometry args={[0.5, 0]} />
+            </mesh>
+          ))}
 
-          {/* On-grass content */}
-          <group position={[0, 0.04, 0]}>{children}</group>
+          {/* On-grass content (focal point) */}
+          <group position={[0, geo.grassTopY, 0]}>{children}</group>
         </group>
       </group>
     </group>

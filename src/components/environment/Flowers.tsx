@@ -54,7 +54,7 @@ export function Flowers() {
   const flowers = useMemo<FlowerData[]>(() => {
     const palette = [COLORS.flowerPink, COLORS.flowerWhite, COLORS.flowerPink];
     const rng = mulberry32(303);
-    return scatterWater(10, 0.4, rng).map((pos, i) => ({
+    return scatterWater(6, 0.5, rng).map((pos, i) => ({
       pos,
       petalColor: palette[i % palette.length],
       phase: rng() * Math.PI * 2,
