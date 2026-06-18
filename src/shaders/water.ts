@@ -1,0 +1,113 @@
+import * as THREE from 'three';
+import { MAX_RIPPLES, rippleData } from '../state/ripples';
+import { COLORS } from '../config';
+
+const vertexShader = /* glsl */ `
+  uniform float uTime;
+  varying vec3 vWorldPos;
+  varying vec3 vNormal;
+  varying float vHeight;
+
+  // Sum of a few cheap sine waves → calm, stylized swell.
+  float waveHeight(vec2 p, float t) {
+    float h = 0.0;
+    h += sin(p.x * 0.55 + t * 0.90) * 0.14;
+    h += sin(p.y * 0.65 - t * 0.75) * 0.11;
+    h += sin((p.x + p.y) * 0.50 + t * 1.25) * 0.07;
+    h += sin((p.x - p.y) * 0.80 - t * 1.60) * 0.04;
+    return h;
+  }
+
+  void main() {
+    vec3 pos = position;
+    vec2 p = pos.xy; // local plane coords (before the flattening rotation)
+    float t = uTime;
+
+    float h = waveHeight(p, t);
+    pos.z += h;
+    vHeight = h;
+
+    // Normal from finite differences of the height field.
+    float e = 0.35;
+    float hx = waveHeight(p + vec2(e, 0.0), t) - waveHeight(p - vec2(e, 0.0), t);
+    float hy = waveHeight(p + vec2(0.0, e), t) - waveHeight(p - vec2(0.0, e), t);
+    vec3 n = normalize(vec3(-hx, -hy, 2.0 * e));
+    vNormal = normalize(mat3(modelMatrix) * n);
+
+    vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+    vWorldPos = worldPos.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPos;
+  }
+`;
+
+const fragmentShader = /* glsl */ `
+  #define MAX_RIPPLES ${MAX_RIPPLES}
+  uniform float uTime;
+  uniform vec3 uColorDeep;
+  uniform vec3 uColorShallow;
+  uniform vec3 uColorHighlight;
+  uniform vec3 uLightDir;
+  uniform vec4 uRipples[MAX_RIPPLES];
+
+  varying vec3 vWorldPos;
+  varying vec3 vNormal;
+  varying float vHeight;
+
+  void main() {
+    vec3 normal = normalize(vNormal);
+
+    // Depth gradient: a touch deeper / cooler toward the pond edges.
+    float distC = length(vWorldPos.xz);
+    float depth = smoothstep(0.0, 17.0, distC);
+    vec3 base = mix(uColorShallow, uColorDeep, depth * 0.85);
+
+    // Wave crests catch the light.
+    base = mix(base, uColorHighlight, smoothstep(0.06, 0.16, vHeight) * 0.5);
+
+    // Soft diffuse + a top-down specular sparkle on the crests.
+    vec3 L = normalize(uLightDir);
+    float diff = clamp(dot(normal, L) * 0.5 + 0.5, 0.0, 1.0);
+    vec3 color = base * (0.80 + 0.20 * diff);
+
+    vec3 V = vec3(0.0, 1.0, 0.0);
+    vec3 H = normalize(L + V);
+    float spec = pow(clamp(dot(normal, H), 0.0, 1.0), 60.0);
+    color += vec3(spec) * 0.30;
+
+    // Expanding concentric ripples from the shared buffer.
+    float ripple = 0.0;
+    for (int i = 0; i < MAX_RIPPLES; i++) {
+      vec4 r = uRipples[i];
+      float strength = r.w;
+      if (strength <= 0.0) continue;
+      float age = uTime - r.z;
+      if (age < 0.0 || age > 2.2) continue;
+      float d = distance(vWorldPos.xz, r.xy);
+      float radius = age * 2.6;
+      float ring = smoothstep(0.55, 0.0, abs(d - radius));
+      float ring2 = smoothstep(0.50, 0.0, abs(d - radius * 0.55)) * 0.5;
+      float fade = 1.0 - age / 2.2;
+      ripple += (ring + ring2) * fade * strength;
+    }
+    ripple = clamp(ripple, 0.0, 1.5);
+    color += uColorHighlight * ripple * 0.5;
+
+    gl_FragColor = vec4(color, 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
+export function createWaterMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: { value: 0 },
+      uColorDeep: { value: new THREE.Color(COLORS.waterDeep) },
+      uColorShallow: { value: new THREE.Color(COLORS.waterShallow) },
+      uColorHighlight: { value: new THREE.Color(COLORS.waterHighlight) },
+      uLightDir: { value: new THREE.Vector3(0.4, 1.0, 0.3).normalize() },
+      uRipples: { value: rippleData },
+    },
+  });
+}
