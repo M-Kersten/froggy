@@ -28,6 +28,16 @@ export function CameraRig() {
       CAMERA.offset[1] * zoom,
       frogState.position.z + CAMERA.offset[2] * zoom,
     );
+
+    if (frogState.cameraSnap) {
+      // Jump straight to the frog (sidebar quick-jump) instead of gliding.
+      c.position.copy(desired.current);
+      look.current.set(frogState.position.x, 0, frogState.position.z);
+      c.lookAt(look.current);
+      frogState.cameraSnap = false;
+      return;
+    }
+
     c.position.lerp(desired.current, k);
 
     // Smoothly track the look-at point (ground level, ignore hop bounce).

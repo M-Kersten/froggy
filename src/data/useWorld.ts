@@ -7,6 +7,9 @@ const world = data as WorldData;
 export const islands: Island[] = world.islands;
 export const bridges: Bridge[] = world.bridges;
 
+/** Just the project islands, in order — used by the "Selected work" section. */
+export const projects: Island[] = islands.filter((i) => i.type === 'project');
+
 export function getIsland(id: string): Island | undefined {
   return islands.find((i) => i.id === id);
 }

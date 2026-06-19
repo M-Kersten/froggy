@@ -84,7 +84,14 @@ function IslandProximity() {
     if (!nearest) return;
     const within = best <= nearest.radius + 1.4 ? nearest : null;
     if ((within?.id ?? null) !== nearbyId) setNearby(within?.id ?? null);
-    if (within?.content && best <= within.radius * 0.7 && !activeNode && dismissedId !== within.id) {
+    // Auto-open on walk-up, but never the intro hub (the frog starts there).
+    if (
+      within?.content &&
+      within.type !== 'intro' &&
+      best <= within.radius * 0.7 &&
+      !activeNode &&
+      dismissedId !== within.id
+    ) {
       openNode({ id: within.id, accent: within.accent, content: within.content });
     }
   });

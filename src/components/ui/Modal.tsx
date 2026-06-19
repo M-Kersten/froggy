@@ -132,12 +132,25 @@ export function Modal() {
             </div>
           ) : (
             <div className="modal-actions">
-              {content.link && (
-                <a className="btn btn--primary" href={content.link} target="_blank" rel="noreferrer">
-                  {shown.content.screenshot ? 'View project' : 'Learn more'}
-                  <ArrowIcon />
-                </a>
-              )}
+              {content.link &&
+                (content.link.startsWith('#') ? (
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => {
+                      const target = content.link!;
+                      close();
+                      document.querySelector(target)?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Read more
+                    <ArrowIcon />
+                  </button>
+                ) : (
+                  <a className="btn btn--primary" href={content.link} target="_blank" rel="noreferrer">
+                    {content.screenshot ? 'View project' : 'Learn more'}
+                    <ArrowIcon />
+                  </a>
+                ))}
               <button className="btn btn--ghost" onClick={close}>
                 Keep exploring
               </button>
