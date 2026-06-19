@@ -30,7 +30,7 @@
     {
       "id": "experiments",
       "type": "info",
-      "label": "MK Beyond Experiments",
+      "label": "Experiments",
       "position": [-12.5, 13],
       "radius": 2.4,
       "accent": "#6fc6b6",
