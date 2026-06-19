@@ -28,7 +28,7 @@ export function IntroContent() {
     <group>
       <Signboard
         title="Hi, I'm Merijn Kersten"
-        subtitle="Welcome! Walk the frog across the bridges to explore my work."
+        subtitle="No i'm not a frog, but he's here to guide you through my work!"
         accent="#7ec98a"
         width={3.7}
         position={[0, 0, -0.6]}

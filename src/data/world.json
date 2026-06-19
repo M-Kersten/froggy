@@ -20,9 +20,9 @@
       "accent": "#ff8a5c",
       "prop": "board",
       "content": {
-        "title": "Amsterdam Characters",
-        "summary": "AI-generated digital residents that bring Amsterdam stories to life.",
-        "screenshot": "./screenshots/amsterdam-characters.svg",
+        "title": "My work in Amsterdam",
+        "summary": "I made some AI characters that live in Amsterdam, you could visit them to hear their story",
+        "screenshot": "./screenshots/amsterdam.jpg",
         "link": "https://merijnkersten.nl/work/amsterdam-characters",
         "tag": "AI · Storytelling"
       }
@@ -30,15 +30,15 @@
     {
       "id": "experiments",
       "type": "info",
-      "label": "Experiments",
+      "label": "MK Beyond Experiments",
       "position": [-12.5, 13],
       "radius": 2.4,
       "accent": "#6fc6b6",
       "prop": "easel",
       "content": {
         "title": "Experiments",
-        "summary": "A sketchbook of small prototypes, shader studies and weekend builds.",
-        "tag": "Playground",
+        "summary": "When not working i still like to tinker around with tech, i do this under the name MK Beyond",
+        "tag": "Art · Music · Interactive installations",
         "link": "https://merijnkersten.nl/experiments"
       }
     },
@@ -52,9 +52,9 @@
       "accent": "#9b6dff",
       "prop": "board",
       "content": {
-        "title": "XR Utility Explorer",
+        "title": "Alliander",
         "summary": "A mixed reality experience for understanding underground infrastructure.",
-        "screenshot": "./screenshots/xr-utility-explorer.svg",
+        "screenshot": "./screenshots/alliander.jpg",
         "link": "https://merijnkersten.nl/work/xr-utility-explorer",
         "tag": "Mixed Reality"
       }
@@ -69,7 +69,7 @@
       "prop": "mic",
       "content": {
         "title": "Talks & Workshops",
-        "summary": "Sessions on spatial computing, playful interaction and creative AI.",
+        "summary": "Sometimes i can be found on a stage, yes really, i aint scared...",
         "tag": "Speaking",
         "link": "https://merijnkersten.nl/talks"
       }
@@ -84,11 +84,11 @@
       "accent": "#4fc3f7",
       "prop": "board",
       "content": {
-        "title": "Vision Pro Prototype",
-        "summary": "Spatial computing experiments built for Apple Vision Pro.",
-        "screenshot": "./screenshots/vision-pro-prototype.svg",
+        "title": "VR",
+        "summary": "Training simulations in VR is where i have the most experience, from designing them to programming",
+        "screenshot": "./screenshots/vr.jpg",
         "link": "https://merijnkersten.nl/work/vision-pro-prototype",
-        "tag": "Spatial Computing"
+        "tag": "Art · Figma · Multiplayer networking"
       }
     },
     {
@@ -100,9 +100,9 @@
       "accent": "#a0d468",
       "prop": "book",
       "content": {
-        "title": "Devlog",
-        "summary": "Notes and behind-the-scenes writing on the things I'm making.",
-        "tag": "Writing",
+        "title": "Videos & forum posts",
+        "summary": "I like to let people know what i think about developments in tech and to share my own experiments",
+        "tag": "Writing - tutorials",
         "link": "https://merijnkersten.nl/devlog"
       }
     },
@@ -116,12 +116,12 @@
       "prop": "signs",
       "content": {
         "title": "Say hello",
-        "summary": "Let's make something playful together — I'm always up for a chat.",
+        "summary": "Let's make something cool together — I'm always up for a chat.",
         "links": [
           { "label": "Email", "url": "mailto:info@merijnkersten.nl", "icon": "mail" },
           { "label": "GitHub", "url": "https://github.com/m-kersten", "icon": "github" },
           { "label": "LinkedIn", "url": "https://www.linkedin.com/in/merijnkersten", "icon": "linkedin" },
-          { "label": "YouTube", "url": "https://youtube.com/@merijnkersten", "icon": "youtube" }
+          { "label": "YouTube", "url": "https://www.youtube.com/@mrspazzout1", "icon": "youtube" }
         ]
       }
     }
