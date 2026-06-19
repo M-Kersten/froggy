@@ -8,7 +8,13 @@
       "position": [0, 22],
       "radius": 4.6,
       "accent": "#8fe0a0",
-      "prop": "torii"
+      "prop": "torii",
+      "content": {
+        "title": "Hi, I'm Merijn",
+        "summary": "A creative technologist designing playful, spatial experiences — and the keeper of this little pond.",
+        "tag": "About",
+        "link": "#about"
+      }
     },
     {
       "id": "amsterdam-characters",

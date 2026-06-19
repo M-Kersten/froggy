@@ -13,13 +13,18 @@ const KEY_MAP: Record<string, [axis: 'x' | 'y', value: number]> = {
 };
 
 /**
- * Listens for WASD / arrow keys and updates the shared keyboard input vector.
- * `enabled` lets us suspend movement (e.g. while a modal is open).
+ * Listens for WASD / arrow keys and updates the shared keyboard input vector —
+ * but only while `enabled` (i.e. the pond is focused/hovered). When disabled it
+ * attaches no listeners, so arrow keys scroll the page normally.
  */
 export function useKeyboardControls(enabled: boolean): void {
   useEffect(() => {
-    const pressed = new Set<string>();
+    if (!enabled) {
+      inputState.keyboard.set(0, 0);
+      return;
+    }
 
+    const pressed = new Set<string>();
     const recompute = () => {
       let x = 0;
       let y = 0;
@@ -34,19 +39,15 @@ export function useKeyboardControls(enabled: boolean): void {
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (!(e.code in KEY_MAP)) return;
-      // Stop the page from scrolling on arrow / space presses.
-      e.preventDefault();
-      if (!enabled) return;
+      e.preventDefault(); // stop arrow/space page scroll while controlling the frog
       pressed.add(e.code);
       recompute();
     };
-
     const onKeyUp = (e: KeyboardEvent) => {
       if (!(e.code in KEY_MAP)) return;
       pressed.delete(e.code);
       recompute();
     };
-
     const reset = () => {
       pressed.clear();
       inputState.keyboard.set(0, 0);
@@ -54,11 +55,7 @@ export function useKeyboardControls(enabled: boolean): void {
 
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
-    // Releasing focus (tab switch) should stop the frog.
     window.addEventListener('blur', reset);
-
-    if (!enabled) reset();
-
     return () => {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);

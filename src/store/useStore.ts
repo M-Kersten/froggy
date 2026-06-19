@@ -8,7 +8,7 @@ export interface ActiveNode {
 }
 
 interface GameState {
-  /** True once the loader has finished and the player presses start. */
+  /** Whether the pond simulation is live (true by default — no start gate). */
   started: boolean;
 
   /** Island the frog is close enough to interact with (for highlighting). */
@@ -38,7 +38,7 @@ interface GameState {
 }
 
 export const useStore = create<GameState>((set, get) => ({
-  started: false,
+  started: true,
   nearbyId: null,
   activeNode: null,
   dismissedId: null,
